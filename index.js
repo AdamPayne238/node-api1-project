@@ -9,25 +9,31 @@ const server = express(); // creates a server
 //middleware
 server.use(express.json()); //needed for POST and PUT to work
 
-
+//
 //REQUEST ROUTE HANDLERS
+// 
 
 // | POST   | /api/users     | Creates a user using the information sent inside the `request body`.  
 
 server.post('/api/users', (req, res) => {
-    const user = req.body;
-    // const id = req.params.id ???? maybe??
-  
-    console.log('User Info', user);
-  
-    db.insert(user)
-      .then(info => {
-        res.status(200).json(info);
-      })
-      .catch(err => {
-        console.log('error', err);
-        res.status(500).json({ error: 'failed to add user to db' });
-      });
+    const { name, bio } = req.body;
+    if( !name || !bio ){
+        res.status(500).json({ error: "User Requires Name and Bio"});
+    } else {
+        db.insert({ name, bio})
+        .then(({ id }) => {
+            db.findById(id)
+            .then(user => {
+                res.status(200).json(user);
+            })
+            .catch(err => {
+                res.status(500).json({ error: "User info not found"});
+            });
+        })
+        .catch(err => {
+            res.status(500).json({ error: "error updating user"})
+        })
+    }
   });
 
 // | GET    | /api/users     | Returns an array of all the user objects contained in the database.       
