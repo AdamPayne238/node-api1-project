@@ -81,18 +81,7 @@ server.delete('/api/users/:id', (req, res) => {
 
 // | PUT    | /api/users/:id | Updates the user with the specified `id` using data from the `request body`. Returns the modified document, **NOT the original**. 
 
-server.put('/api/users/:id', (req, res) => {
-    const id = req.body;
 
-    db.update(id)
-    .then(adds => {
-      res.status(200).json({ message: `user id ${id} was updated sucessfully` });
-    })
-    .catch(err => {
-      console.log('error', err);
-      res.status(500).json({ error: `failed to update user id ${id}` });
-    });
-})
 
 //listen for connections (requests) in a particular port on local host
 const port = 7000; // localhost:7000
